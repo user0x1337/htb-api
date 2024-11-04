@@ -219,14 +219,14 @@ class Machine(htb.HTBObject):
         self.user_owned = data["authUserInUserOwns"]
         self.root_owned = data["authUserInRootOwns"]
         self.reviewed = data["authUserHasReviewed"]
-        self.stars = float(data["stars"])
+        self.stars = float(data["star"])
         self.avatar = data["avatar"]
         self.difficulty = data["difficultyText"]
         self.free = data["free"]
-        self._author_ids = [data["maker"]["id"]]
+        # self._author_ids = [data["maker"]["id"]]
         if data.get("ip"):
             self._ip = data["ip"]
-        if data["maker2"]:
+        if data.get("maker2", None):
             self._author_ids.append(data["maker2"]["id"])
         if not summary:
             self.active = bool(data["active"])

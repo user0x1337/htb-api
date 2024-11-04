@@ -362,7 +362,7 @@ class HTBClient:
         from .machine import Machine
 
         if not retired:
-            data = cast(dict, self.do_request("machine/list"))["info"][:limit]
+            data = cast(dict, self.do_request("machine/paginated"))["data"][:limit]
         else:
             data = cast(dict, self.do_request("machine/list/retired"))["info"][:limit]
         machines = [Machine(m, self, summary=True) for m in data]

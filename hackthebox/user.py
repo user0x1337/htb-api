@@ -66,12 +66,9 @@ class User(htb.HTBObject):
         "respects",
         "university",
         "university_name",
-        "description",
         "github",
         "linkedin",
         "twitter",
-        "website",
-        "respected",
         "followed",
         "rank_id",
         "rank_progress",
@@ -90,17 +87,14 @@ class User(htb.HTBObject):
     # TODO: University object
     university = None
     university_name: str
-    description: str
     github: str
     linkedin: str
     twitter: str
-    website: str
-    respected: bool
     followed: bool
     rank_id: int
     rank_progress: int
     next_rank: str
-    next_rank_points: int
+    next_rank_points: float
     rank_ownership: float
     rank_requirement: int
     country_name: str
@@ -142,8 +136,7 @@ class User(htb.HTBObject):
         self.name = data["name"]
         self.user_owns = data["user_owns"]
         self.points = data["points"]
-        self.avatar = data["avatar"]
-
+        self.avatar = data.get("avatar", "")
         if summary:
             self._is_summary = True
             self.ranking = data["rank"]
@@ -161,12 +154,9 @@ class User(htb.HTBObject):
             self.respects = data["respects"]
             self.university = data["university"]
             self.university_name = data["university_name"]
-            self.description = data["description"]
             self.github = data["github"]
             self.linkedin = data["linkedin"]
             self.twitter = data["twitter"]
-            self.website = data["website"]
-            self.respected = data.get("isRespected", False)
             self.followed = data.get("isFollowed", False)
             self.rank_progress = data["current_rank_progress"]
             self.next_rank = data["next_rank"]
