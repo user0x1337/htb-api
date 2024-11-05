@@ -222,7 +222,7 @@ class Machine(htb.HTBObject):
         if "star" in data:
             self.stars = float(data["star"])
         elif "stars" in data:
-            self.stars = float(data["star"])
+            self.stars = float(data["stars"])
         else:
             self.stars = 0
         self.avatar = data["avatar"]
