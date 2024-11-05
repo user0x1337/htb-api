@@ -158,9 +158,8 @@ class Machine(htb.HTBObject):
         """The IP of an active machine."""
         if self._ip is not None:
             return self._ip
-        listing = self._client.do_request(f"machine/profile/{self.id}")["info"]
-        m = next(filter(lambda x: x["id"] == self.id, listing))
-        self._ip = m["ip"]
+        listing: dict = cast(dict, self._client.do_request(f"machine/profile/{self.id}")["info"])
+        self._ip = listing["ip"]
         return self._ip
 
     def start(self, release_arena=False) -> Union["MachineInstance", None]:
