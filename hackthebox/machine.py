@@ -158,7 +158,7 @@ class Machine(htb.HTBObject):
         """The IP of an active machine."""
         if self._ip is not None:
             return self._ip
-        listing = self._client.do_request("machine/list")["info"]
+        listing = self._client.do_request(f"machine/profile/{self.id}")["info"]
         m = next(filter(lambda x: x["id"] == self.id, listing))
         self._ip = m["ip"]
         return self._ip
@@ -228,7 +228,8 @@ class Machine(htb.HTBObject):
         self.avatar = data["avatar"]
         self.difficulty = data["difficultyText"]
         self.free = data["free"]
-        # self._author_ids = [data["maker"]["id"]]
+        if data.get("maker", None):
+            self._author_ids = [data["maker"]["id"]]
         if data.get("ip"):
             self._ip = data["ip"]
         if data.get("maker2", None):
