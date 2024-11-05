@@ -4,6 +4,8 @@ from .errors import *
 from .fortress import Fortress
 from .htb import HTBClient, HTBObject
 from .machine import Machine, MachineInstance
+from .announcement import Announcement
+from .notice import Notice
 from .search import Search
 from .solve import *
 from .team import Team

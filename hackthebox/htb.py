@@ -22,6 +22,8 @@ if TYPE_CHECKING:
     from .user import User
     from .search import Search
     from .machine import Machine, MachineInstance
+    from .announcement import Announcement
+    from .notice import Notice
     from .challenge import Challenge
     from .endgame import Endgame
     from .fortress import Fortress
@@ -279,6 +281,29 @@ class HTBClient:
                 if "correct" not in resp["message"]:
                     raise IncorrectOTPException
 
+    def get_announcement(self) -> "Announcement":
+        """
+        Returns: A announcement object
+        """
+        from .announcement import Announcement
+
+        data = cast(dict, self.do_request(f"sidebar/announcement"))["announcement"]
+        return Announcement(data, self)
+
+    def get_notices(self, limit: int = None) -> List["Notice"]:
+        """
+        Returns: A list of notice objects
+        Args:
+            limit: The maximum number to fetch
+        """
+        from .notice import Notice
+
+
+        data = cast(dict, self.do_request("notices"))["data"][:limit]
+        notices = [Notice(n, self) for n in data]
+        return notices
+
+
     # noinspection PyUnresolvedReferences
     def search(self, search_term: str) -> "Search":
         """
@@ -364,7 +389,7 @@ class HTBClient:
         if not retired:
             data = cast(dict, self.do_request("machine/paginated"))["data"][:limit]
         else:
-            data = cast(dict, self.do_request("machine/list/retired"))["info"][:limit]
+            data = cast(dict, self.do_request("machine/list/retired/paginated"))["data"][:limit]
         machines = [Machine(m, self, summary=True) for m in data]
         for machine in machines:
             machine.retired = retired
