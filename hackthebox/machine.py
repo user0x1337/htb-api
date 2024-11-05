@@ -219,7 +219,7 @@ class Machine(htb.HTBObject):
         self.user_owned = data["authUserInUserOwns"]
         self.root_owned = data["authUserInRootOwns"]
         self.reviewed = data["authUserHasReviewed"]
-        self.stars = float(data["star"])
+        self.stars = float(data["stars"])
         self.avatar = data["avatar"]
         self.difficulty = data["difficultyText"]
         self.free = data["free"]
