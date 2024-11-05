@@ -219,7 +219,12 @@ class Machine(htb.HTBObject):
         self.user_owned = data["authUserInUserOwns"]
         self.root_owned = data["authUserInRootOwns"]
         self.reviewed = data["authUserHasReviewed"]
-        self.stars = float(data["stars"])
+        if "star" in data:
+            self.stars = float(data["star"])
+        elif "stars" in data:
+            self.stars = float(data["star"])
+        else:
+            self.stars = 0
         self.avatar = data["avatar"]
         self.difficulty = data["difficultyText"]
         self.free = data["free"]
