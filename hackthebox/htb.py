@@ -10,6 +10,7 @@ from typing import List, Callable, Union, Optional, Tuple, cast, Any, TYPE_CHECK
 
 import requests
 
+from examples.base import client
 from .constants import API_BASE, USER_AGENT
 from .errors import (
     AuthenticationException,
@@ -28,6 +29,7 @@ if TYPE_CHECKING:
     from .endgame import Endgame
     from .fortress import Fortress
     from .team import Team
+    from .connection import ConnectionStatus, ConnectionServer, ConnectionDetails
     from .leaderboard import Leaderboard
     from .vpn import VPNServer
 
@@ -597,6 +599,33 @@ class HTBClient:
             data = connections["lab"]["assigned_server"]
 
         return VPNServer(data, self)
+
+
+    def get_all_connection_status(self) -> "List[ConnectionStatus]":
+        """
+        Returns a list of all connections
+        """
+
+        from .connection import ConnectionStatus, ConnectionServer, ConnectionDetails
+        res = cast(list, self.do_request("connections/status"))
+        if res is None or len(res) == 0:
+            return []
+
+        res: List[ConnectionStatus] = []
+        for con in res:
+            server = None
+            connection = None
+
+            if "server" in con:
+                server = ConnectionServer(con["server"], client)
+            if "connection" in con:
+                connection = ConnectionDetails(con["connection"], client)
+
+            status = ConnectionStatus(cast(dict, con), client, server, connection)
+            res.append(status)
+
+        return res
+
 
     # noinspection PyUnresolvedReferences
     def get_all_vpn_servers(self, release_arena=False) -> "List[VPNServer]":
