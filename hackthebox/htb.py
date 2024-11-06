@@ -606,18 +606,19 @@ class HTBClient:
         """
 
         from .connection import ConnectionStatus, ConnectionServer, ConnectionDetails
-        res = cast(list, self.do_request("connections/status"))
-        if res is None or len(res) == 0:
+        resp = cast(list, self.do_request("connection/status"))
+        if resp is None or len(resp) == 0:
             return []
 
         res: List[ConnectionStatus] = []
-        for con in res:
+        for con in resp:
+            con = cast(dict, con)
             server = None
             connection = None
 
-            if "server" in con:
+            if "server" in con.keys():
                 server = ConnectionServer(con["server"], self)
-            if "connection" in con:
+            if "connection" in con.keys():
                 connection = ConnectionDetails(con["connection"], self)
 
             status = ConnectionStatus(cast(dict, con), self, server, connection)

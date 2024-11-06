@@ -52,7 +52,7 @@ class ConnectionDetails(htb.HTBObject):
     def __init__(self, data: dict, client: htb.HTBClient):
         self._client = client
         self.name = data["name"]
-        self.ip4 = data["ipv4"]
+        self.ip4 = data["ip4"]
         self.ip6 = data["ip6"]
 
 
@@ -73,7 +73,7 @@ class ConnectionStatus(htb.HTBObject):
     """
 
     type: str
-    location_friendly_name: str
+    location_type_friendly: str
     connection_server: ConnectionServer
     connection_details: ConnectionDetails
 
@@ -86,12 +86,12 @@ class ConnectionStatus(htb.HTBObject):
 
         self._client = client
         self.type = data["type"]
-        self.location_friendly_name = data["location_friendly_name"]
+        self.location_type_friendly = data["location_type_friendly"]
         self.connection_details = connection_details
         self.connection_server = connection_server
 
     def __repr__(self):
-        return f"<Connection Status '{self.friendly_name}'>"
+        return f"<Connection Status '{self.location_type_friendly}'>"
 
     def __str__(self):
-        return f"{self.friendly_name}"
+        return f"{self.location_type_friendly}"
