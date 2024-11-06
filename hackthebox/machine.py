@@ -267,6 +267,11 @@ class MachineInstance:
     server: vpn.VPNServer
     client: htb.HTBClient
     machine: Machine
+    expires_at: datetime
+    is_spawning: bool
+    avatar_url: str
+    lab_serer: str
+
 
     def __init__(
         self, ip: str, server: vpn.VPNServer, machine: Machine, client: htb.HTBClient, info: dict
