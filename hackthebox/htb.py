@@ -383,12 +383,26 @@ class HTBClient:
 
         """
         from .machine import Machine
+        if limit is None:
+            limit = 1000
 
         if not retired:
-            data = cast(dict, self.do_request("machine/paginated"))["data"][:limit]
+            data = cast(dict, self.do_request(f"machine/paginated?per_page={min(limit, 100)}&page=1"))["data"]
+            machines = [Machine(m, self, summary=True) for m in data]
         else:
-            data = cast(dict, self.do_request("machine/list/retired/paginated"))["data"][:limit]
-        machines = [Machine(m, self, summary=True) for m in data]
+            resp = cast(dict, self.do_request(f"machine/list/retired/paginated?per_page={min(limit, 100)}&retired=1&page=1"))
+            meta = resp["meta"]
+            from_page = int(meta.get("from", 1))
+            last_page = min(max(limit // 100, 1), int(meta.get("last_page", 100)))
+
+            data = resp["data"]
+            machines = [Machine(m, self, summary=True) for m in data]
+            limit -= len(machines)
+            for i in range(from_page + 1, last_page + 1):
+                data = cast(dict, self.do_request(f"machine/list/retired/paginated?per_page={max(min(limit, 100), 0)}&page={i}&retired=1"))["data"]
+                machines += [Machine(m, self, summary=True) for m in data]
+                limit -= len(machines)
+
         for machine in machines:
             machine.retired = retired
         return machines
