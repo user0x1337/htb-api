@@ -290,12 +290,7 @@ class MachineInstance:
 
     def stop(self):
         """Request the instance be stopped."""
-        if self.machine.is_release:
-            self.client.do_request("release_arena/terminate", post=True)
-        else:
-            self.client.do_request(
-                "vm/terminate", json_data={"machine_id": self.machine.id}
-            )
+        self.client.do_request("vm/terminate", json_data={"machine_id": self.machine.id})
 
         # Can't delete references to the object from here so we just have
         # to set everything to None and prevent further usage
@@ -306,14 +301,7 @@ class MachineInstance:
 
     def reset(self):
         """Request the instance be reset."""
-        if self.machine.is_release:
-            resp = self.client.do_request(
-                "release_arena/reset", json_data={"machine_id": self.machine.id}
-            )
-        else:
-            resp = self.client.do_request(
-                "vm/reset", json_data={"machine_id": self.machine.id}
-            )
+        resp = self.client.do_request("vm/reset", json_data={"machine_id": self.machine.id})
         # VM
         if resp["message"].endswith(" will be reset in 1 minute."):
             return True
