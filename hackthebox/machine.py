@@ -313,3 +313,16 @@ class MachineInstance:
         elif resp["message"].startswith("You must wait"):
             raise TooManyResetAttempts
         raise MachineException
+
+    def extend(self) -> [bool, str]:
+        """Request the instance be extended
+
+            Returns:
+                bool: True if extend was successfull, otherwise false
+                str: The extended message
+        """
+
+        resp = cast(dict, self.client.do_request("vm/extend", json_data={"machine_id": self.machine.id}, post=True))
+        msg = resp.get("message")
+
+        return "has plenty of time until expiration" in msg, msg
