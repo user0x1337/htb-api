@@ -10,7 +10,6 @@ from typing import List, Callable, Union, Optional, Tuple, cast, Any, TYPE_CHECK
 
 import requests
 
-from examples.base import client
 from .constants import API_BASE, USER_AGENT
 from .errors import (
     AuthenticationException,
@@ -617,11 +616,11 @@ class HTBClient:
             connection = None
 
             if "server" in con:
-                server = ConnectionServer(con["server"], client)
+                server = ConnectionServer(con["server"], self)
             if "connection" in con:
-                connection = ConnectionDetails(con["connection"], client)
+                connection = ConnectionDetails(con["connection"], self)
 
-            status = ConnectionStatus(cast(dict, con), client, server, connection)
+            status = ConnectionStatus(cast(dict, con), self, server, connection)
             res.append(status)
 
         return res
