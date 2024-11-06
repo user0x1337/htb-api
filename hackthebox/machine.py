@@ -162,45 +162,28 @@ class Machine(htb.HTBObject):
         self._ip = listing["ip"]
         return self._ip
 
-    def start(self, release_arena=False) -> Union["MachineInstance", None]:
+    def start(self) -> Union["MachineInstance", None]:
         """Alias for `Machine.spawn()`"""
-        return self.spawn(release_arena)
+        return self.spawn()
 
-    def spawn(self, release_arena=False) -> "MachineInstance":
+    def spawn(self) -> "MachineInstance":
         """Spawn an instance of this machine.
 
-        Args:
-            release_arena: Whether to use Release Arena to spawn the machine
 
         Returns:
             The spawned `MachineInstance`
         """
-        if release_arena:
-            if not self.is_release:
-                # TODO: Better exception
-                raise Exception("Machine is not on release arena")
-            data = cast(dict, self._client.do_request("release_arena/spawn", post=True))
-            if data.get("success") != 1:
-                raise Exception(f"Failed to spawn: {data}")
-            ip = cast(dict, self._client.do_request("release_arena/active"))["info"][
-                "ip"
-            ]
-            server = self._client.get_current_vpn_server(release_arena=True)
-        else:
-            data = cast(
-                dict,
-                self._client.do_request("vm/spawn", json_data={"machine_id": self.id}),
-            )
-            if "Machine deployed" in cast(
-                str, data.get("message")
-            ) or "You have been assigned" in cast(str, data.get("message")):
-                ip = cast(dict, self._client.do_request(f"machine/profile/{self.id}"))[
-                    "info"
-                ]["ip"]
-                server = self._client.get_current_vpn_server()
-            else:
-                raise Exception(f"Failed to spawn: {data}")
-        return MachineInstance(ip, server, self, self._client)
+        data = cast(dict, self._client.do_request("vm/spawn", json_data={"machine_id": self.id}))
+        if ("Machine deployed" in cast(str, data.get("message")) or
+                "You have been assigned" in cast(str, data.get("message"))):
+
+            info = cast(dict, self.do_request(f"machine/active"))["info"]
+            if info:
+                box = self.get_machine(info["id"])
+                server = box._client.get_current_vpn_server(info.get("type", " ") == "Release Arena")
+                return MachineInstance(box.ip, server, box, box._client, info)
+
+        raise Exception(f"Failed to spawn: {data}")
 
     def __repr__(self):
         return f"<Machine '{self.name}'>"
@@ -277,6 +260,7 @@ class MachineInstance:
         server: The `VPNServer` that the machine is on
         machine: The `Machine` this is an instance of
         client: The passed-through API client
+        info: instance data from API
     """
 
     ip: str
@@ -285,12 +269,16 @@ class MachineInstance:
     machine: Machine
 
     def __init__(
-        self, ip: str, server: vpn.VPNServer, machine: Machine, client: htb.HTBClient
+        self, ip: str, server: vpn.VPNServer, machine: Machine, client: htb.HTBClient, info: dict
     ):
         self.client = client
         self.ip = ip
         self.server = server
         self.machine = machine
+        self.expires_at: datetime = dateutil.parser.parse(info["expires_at"])
+        self.is_spawning: bool = info.get("is_spawning", False)
+        self.avatar_url: str | None = info.get("avatar")
+        self.lab_serer: str | None = info.get("lab_server")
 
     def __repr__(self):
         return f"<'{self.machine.name}'@{self.server.friendly_name} - {self.ip}>"

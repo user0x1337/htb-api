@@ -365,7 +365,7 @@ class HTBClient:
         if info:
             box = self.get_machine(info["id"])
             server = box._client.get_current_vpn_server(release_arena)
-            return MachineInstance(box.ip, server, box, box._client)
+            return MachineInstance(box.ip, server, box, box._client, info)
         return None
 
     # noinspection PyUnresolvedReferences
