@@ -177,7 +177,7 @@ class Machine(htb.HTBObject):
         if ("Machine deployed" in cast(str, data.get("message")) or
                 "You have been assigned" in cast(str, data.get("message"))):
 
-            info = cast(dict, self.do_request(f"machine/active"))["info"]
+            info = cast(dict, self._client.do_request(f"machine/active"))["info"]
             if info:
                 box = self.get_machine(info["id"])
                 server = box._client.get_current_vpn_server(info.get("type", " ") == "Release Arena")
