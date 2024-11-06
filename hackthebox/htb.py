@@ -350,7 +350,7 @@ class HTBClient:
 
     # noinspection PyUnresolvedReferences
     def get_active_machine(
-        self, release_arena: bool = False
+        self
     ) -> Optional["MachineInstance"]:
         """
 
@@ -361,10 +361,7 @@ class HTBClient:
         """
         from .machine import Machine, MachineInstance
 
-        if release_arena:
-            info = cast(dict, self.do_request(f"release_arena/active"))["info"]
-        else:
-            info = cast(dict, self.do_request(f"machine/active"))["info"]
+        info = cast(dict, self.do_request(f"machine/active"))["info"]
         if info:
             box = self.get_machine(info["id"])
             server = box._client.get_current_vpn_server(release_arena)
