@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from .search import Search
     from .machine import Machine, MachineInstance
     from .announcement import Announcement
+    from .category import Category
     from .notice import Notice
     from .challenge import Challenge
     from .endgame import Endgame
@@ -408,6 +409,19 @@ class HTBClient:
         return machines
 
     # noinspection PyUnresolvedReferences
+    def get_categories(self) -> List["Category"]:
+        """
+        Returns: A list of category objects
+        """
+        from .category import Category
+
+        data = cast(dict, self.do_request(f"challenges/categories/list"))
+        categories = []
+        for category in data["info"]:
+            categories.append(Category(category, self))
+        return categories
+
+    # noinspection PyUnresolvedReferences
     def get_challenge(self, challenge_id: int | str) -> "Challenge":
         """
 
@@ -436,11 +450,11 @@ class HTBClient:
 
         """
         from .challenge import Challenge
-
         if retired:
-            data = cast(dict, self.do_request("challenge/list/retired"))
+            data = cast(dict, self.do_request(f"challenges/list/retired"))
         else:
-            data = cast(dict, self.do_request("challenge/list"))
+            data = cast(dict, self.do_request(f"challenges/list"))
+
         challenges = []
         for challenge in data["challenges"][:limit]:
             challenges.append(Challenge(challenge, self, summary=True))

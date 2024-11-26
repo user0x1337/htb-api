@@ -80,10 +80,14 @@ class Challenge(htb.HTBObject):
     _author_ids: List[int]
 
     _detailed_attributes = (
+        "description",
+        "has_download",
+        "has_docker",
         "instance",
     )
     description: str
     category: str
+    category_id: int
     has_download: bool
     has_docker: bool
     instance: Optional[DockerInstance]
@@ -197,15 +201,16 @@ class Challenge(htb.HTBObject):
         self.solved = data["authUserSolve"]
         self.likes = data["likes"]
         self.dislikes = data["dislikes"]
+        self.category_id = int(data["challenge_category_id"])
         self.release_date = dateutil.parser.parse(data["release_date"])
-        self.has_download = data["download"]
-        self.has_docker = data["docker"]
-        self.category = data["category_name"]
-        self.description = data["description"]
         if not summary:
+            self.description = data["description"]
+            self.category = data["category_name"]
             self._author_ids = [data["creator_id"]]
             if data["creator2_id"]:
                 self._author_ids.append(data["creator2_id"])
+            self.has_download = data["download"]
+            self.has_docker = data["docker"]
             if data["docker_ip"]:
                 self.instance = DockerInstance(
                     data["docker_ip"], data["docker_port"], self.id, self._client
