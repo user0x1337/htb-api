@@ -267,14 +267,14 @@ class DockerInstance:
     def __init__(
         self,
         ip: str,
-        ports: dict[int, int],
+        ports: list[int],
         chall_id: int,
         client: htb.HTBClient,
         container_id: str = None,
     ):
         self.client = client
         self.id = container_id or ""
-        self.ports = list(ports.values())
+        self.ports = ports
         self.ip = ip
         self.chall_id = chall_id
 
