@@ -451,9 +451,9 @@ class HTBClient:
         """
         from .challenge import Challenge
         if retired:
-            data = cast(dict, self.do_request(f"challenges/list/retired"))
+            data = cast(dict, self.do_request(f"challenge/list/retired"))
         else:
-            data = cast(dict, self.do_request(f"challenges/list"))
+            data = cast(dict, self.do_request(f"challenge/list"))
 
         challenges = []
         for challenge in data["challenges"][:limit]:
