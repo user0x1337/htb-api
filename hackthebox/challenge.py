@@ -78,13 +78,16 @@ class Challenge(htb.HTBObject):
     # noinspection PyUnresolvedReferences
     _authors: Optional[List["User"]] = None
     _author_ids: List[int]
+    _first_blood_user: Optional["User"] = None
+    _first_blood_user_id: int
 
     _detailed_attributes = (
         "description",
         "has_download",
         "has_docker",
-        "instance",
+        "instance"
     )
+
     description: str
     category: str
     category_id: int
@@ -169,6 +172,18 @@ class Challenge(htb.HTBObject):
             f.write(data)
         return path
 
+    @property
+    def first_blood_user(self) -> "User":
+        """Fetch the first blood user of the Challenge
+
+                Returns:User
+
+                """
+        if not self._first_blood_user:
+            self._first_blood_user = self._client.get_user(self._first_blood_user_id)
+
+        return self._first_blood_user
+
     # noinspection PyUnresolvedReferences
     @property
     def authors(self) -> List["User"]:
@@ -207,6 +222,7 @@ class Challenge(htb.HTBObject):
             self.description = data["description"]
             self.category = data["category_name"]
             self._author_ids = [data["creator_id"]]
+            self._first_blood_user_id = data["first_blood_user_id"]
             if data["creator2_id"]:
                 self._author_ids.append(data["creator2_id"])
             self.has_download = data["download"]
