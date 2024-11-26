@@ -201,7 +201,7 @@ class Challenge(htb.HTBObject):
         self.solved = data["authUserSolve"]
         self.likes = data["likes"]
         self.dislikes = data["dislikes"]
-        self.category_id = int(data["challenge_category_id"])
+        self.category_id = int(data.get("challenge_category_id", -1))
         self.release_date = dateutil.parser.parse(data["release_date"])
         if not summary:
             self.description = data["description"]
