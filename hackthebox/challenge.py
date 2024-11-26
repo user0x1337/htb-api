@@ -238,7 +238,7 @@ class Challenge(htb.HTBObject):
             self.has_docker = data["docker"]
             if data["docker_ip"]:
                 self.instance = DockerInstance(
-                    data["docker_ip"], data["docker_port"], self.id, self._client
+                    data["docker_ip"], data["docker_ports"], self.id, self._client
                 )
             else:
                 self.instance = None
@@ -259,7 +259,7 @@ class DockerInstance:
     """
 
     id: str
-    port: int
+    ports: List[int]
     ip: str
     chall_id: int
     client: htb.HTBClient
@@ -267,14 +267,14 @@ class DockerInstance:
     def __init__(
         self,
         ip: str,
-        port: int,
+        ports: dict[int, int],
         chall_id: int,
         client: htb.HTBClient,
         container_id: str = None,
     ):
         self.client = client
         self.id = container_id or ""
-        self.port = port
+        self.ports = list(ports.values())
         self.ip = ip
         self.chall_id = chall_id
 

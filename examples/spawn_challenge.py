@@ -6,7 +6,7 @@ def main(client, testing=False):
     challenge.start()
     instance = challenge.instance
     challenge.submit("HTB{fake_flag}", 20)
-    print(instance.ip, instance.port)
+    print(instance.ip, instance.ports)
     instance.stop()
 
 
