@@ -85,10 +85,16 @@ class Challenge(htb.HTBObject):
         "description",
         "has_download",
         "has_docker",
-        "instance"
+        "instance",
+        "download_sha256",
+        "first_blood_time",
+        "authUserSolveTime"
     )
 
+    first_blood_time: str
+    authUserSolveTime: str
     description: str
+    download_sha256: str
     category: str
     category_id: int
     has_download: bool
@@ -226,6 +232,9 @@ class Challenge(htb.HTBObject):
             if data["creator2_id"]:
                 self._author_ids.append(data["creator2_id"])
             self.has_download = data["download"]
+            self.download_sha256 = data.get("sha256")
+            self.authUserSolveTime = data.get("authUserSolveTime")
+            self.first_blood_time = data.get("first_blood_time")
             self.has_docker = data["docker"]
             if data["docker_ip"]:
                 self.instance = DockerInstance(
