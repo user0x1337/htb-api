@@ -415,7 +415,7 @@ class HTBClient:
         """
         from .category import Category
 
-        data = cast(dict, self.do_request(f"challenges/categories/list"))
+        data = cast(dict, self.do_request(f"challenge/categories/list"))
         categories = []
         for category in data["info"]:
             categories.append(Category(category, self))
